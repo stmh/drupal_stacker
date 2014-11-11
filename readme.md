@@ -14,16 +14,18 @@ IN its current form it will create a folder, add a _tools-folder and add the fol
 drupal_stacker needs fabric:
 
 on Mac OS X:
-``brew install python
-pip install fabric
-pip install pyyaml
-``
+
+    brew install python
+    pip install fabric
+    pip install pyyaml
+
 
 on Debian/Ubuntu:
-``apt-get install python-pip
-pip install fabric
-pip install pyyaml
-``
+
+    apt-get install python-pip
+    pip install fabric
+    pip install pyyaml
+
 
 Copy the folder to a suitable folder on your hard-drive
 
