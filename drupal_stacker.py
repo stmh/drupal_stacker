@@ -4,6 +4,8 @@
 from fabric.api import *
 from fabric.colors import green, red
 import os, re, fabric
+import yaml
+
 
 def help():
   print "Usage:"
@@ -11,28 +13,30 @@ def help():
 
 def get_configuration(config_file):
 
-  conf = {
-    'submodules': {},
-    'symbolic_links':{},
-    'git_ignore': [],
-    'git_add': []
-  }
+  if not config_file:
+    config_file = "standard.yaml"
 
-  conf['submodules']['fabalicious'] = 'https://github.com/stmh/fabalicious.git'
-  conf['submodules']['docker'] = 'https://github.com/stmh/drupal-docker.git'
-  conf['submodules']['basebox'] = 'https://github.com/MuschPusch/basebox.git'
+  try:
+    stream = open(config_file, 'r')
+  except IOError:
+    config_file = os.path.dirname(os.path.realpath(__file__)) + "/" + config_file
+    try:
+      stream = open(config_file, 'r')
+    except:
+      print red("Could not find configuration-file.")
+      sys.exit(2)
 
-  conf['symbolic_links']['Vagrantfile'] = 'basebox/VagrantFile'
-  conf['symbolic_links']['fabfile.py'] = 'fabalicious/fabfile.py'
 
-  conf['git_ignore'].append('_tools/chive')
-  conf['git_ignore'].append('fabfile.pyc')
+  conf = yaml.load(stream)
 
-  conf['git_add'] = [ 'Vagrantfile', 'fabfile.py', '.gitignore', '.vagrant' ]
-
-  conf['drush_makefile'] = 'http://cgit.drupalcode.org/commons/plain/drupal-org-core.make'
+  for key in ('submodules', 'symbolic_links', 'git_add'):
+    if not key in conf:
+      print red('Missing key in configuration-file: %s' % key)
+      sys.exit(2)
 
   return conf
+
+
 
 def copy_template(source, root_dir, target, replacements):
 
@@ -47,7 +51,7 @@ def copy_template(source, root_dir, target, replacements):
       out.write(line)
 
   with lcd(root_dir):
-    local('git add %s; git commit -m "create initial fabalicious configuration"' % target)
+    local('git add %s; git commit -m "create initial %s"' % (target, target) )
 
   print template_out + " written and committed."
 
@@ -122,7 +126,10 @@ def init(root_dir = False, config_file=False, make_file=False):
 
   copy_fabfile(root_dir)
 
-  if 'drush_makefile' in conf:
+  if make_file:
+    run_make_file(root_dir, conf['drush_makefile'])
+
+  elif 'drush_makefile' in conf:
     run_make_file(root_dir, conf['drush_makefile'])
 
 
