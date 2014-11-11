@@ -38,7 +38,3 @@ drupal_stacker provides currently only one task
 This will create the folder <project-path>, init a git-repository, add the submodules, add some symlinks, create a fabalicious-config-file and run a drush-makefile for a standard drupal-installation
 
 
-## Todo
-
-* refactor hardcoded configuration and use yaml-file
-* allow other configurations
