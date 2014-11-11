@@ -28,7 +28,7 @@ def get_configuration(config_file):
   conf['git_ignore'].append('_tools/chive')
   conf['git_ignore'].append('fabfile.pyc')
 
-  conf['git_add'] = [ 'Vagrantfile', 'fabfile.py', '.gitignore' ]
+  conf['git_add'] = [ 'Vagrantfile', 'fabfile.py', '.gitignore', '.vagrant' ]
 
   conf['drush_makefile'] = 'http://cgit.drupalcode.org/commons/plain/drupal-org-core.make'
 
