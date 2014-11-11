@@ -1,0 +1,73 @@
+# deployment settings for our deployment-sctipts
+# do not store sensitive passwords in this file! Use SSH-Keys for authentification
+
+
+name: %%PROJECT_NAME%%
+
+excludeFiles:
+  backup:
+    - "styles"
+    - "tmp"
+  copyFrom:
+    - "tmp"
+    - "styles"
+
+
+dockerHosts:
+  default:
+    tasks:
+      start:
+        - docker start %name%
+      stop:
+        - docker stop %name%
+      logs:
+        - docker logs %name%
+      ps:
+        - docker ps
+
+  local:
+    inheritsFrom: default
+    host: %%HOST_NAME%%.dev
+    port: 22
+    user: vagrant
+    password: vagrant
+    rootFolder: /vagrant
+    tasks:
+      rebuild:
+        - cd %rootFolder%/_tools/docker && ./run.sh %name% %rootFolder% --webRoot %guest.rootFolder% --rebuild --http 80 --ssh 222  --no-install
+      run:
+        - cd %rootFolder%/_tools/docker && ./run.sh %name% %rootFolder% --webRoot %guest.rootFolder% --http 80 --ssh 222  --no-install
+
+
+hosts:
+  local:
+    host: %%HOST_NAME%%.dev
+    user: root
+    password: root
+    port: 222
+    vagrant:
+      ip: %%IP%%
+    # path to drupal's root folder
+    rootFolder: /var/www/public
+    gitRootFolder: /var/www/
+    # path to the site's folder
+    siteFolder: /sites/default
+    filesFolder: /sites/default/files
+    backupFolder: /var/www/backups
+    useForDevelopment: true
+    # branch to pull
+    branch: develop
+    hasDrush: true
+    supportsInstalls: true
+    docker:
+      name: %%MACHINE_NAME%%
+      configuration: local
+    database:
+      name: %%MACHINE_NAME%%
+      user: root
+      pass: admin
+
+    reset:
+      - "drush vset -y file_public_path 'sites/default/files'"
+      - "drush vset -y file_private_path 'sites/default/private'"
+      - "drush vset -y file_temporary_path 'sites/default/private/tmp'"
