@@ -1,0 +1,26 @@
+submodules:
+  fabalicious: https://github.com/stmh/fabalicious.git
+  docker: https://github.com/stmh/drupal-docker.git
+  basebox: https://github.com/MuschPusch/basebox.git
+  oxide:
+    folder: public/sites/all/themes/oxide
+    repository: https://github.com/stmh/oxide.git
+  MtHaml:
+    folder: public/sites/all/libraries/MtHaml
+    repository: https://github.com/stmh/MtHaml.git
+
+symbolic_links:
+  Vagrantfile: basebox/VagrantFile
+  fabfile.py: fabalicious/fabfile.py
+
+git_ignore:
+  - _tools/chive
+  - .vagrant
+  - fabfile.pyc
+
+git_add:
+  - Vagrantfile
+  - fabfile.py
+  - .gitignore
+
+drush_makefile: http://cgit.drupalcode.org/commons/plain/drupal-org-core.make
