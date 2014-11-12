@@ -83,16 +83,14 @@ def copy_fabfile(root_dir):
 
 def init_stack(conf, root_dir):
 
-  print green('initing stack... ')
-
-  local( 'mkdir -p %s' % root_dir )
-  local( 'git init %s ' % root_dir )
-
   local( 'mkdir -p %s/_tools' % root_dir )
 
   with lcd(root_dir):
     for name, repo in conf['submodules'].items():
-      local( 'git submodule add %s _tools/%s' % (repo, name))
+      if isinstance(repo, dict):
+        local( 'git submodule add %s %s' % (repo['repository'], repo['folder']))
+      else:
+        local( 'git submodule add %s _tools/%s' % (repo, name))
 
     for filename, path in conf['symbolic_links'].items():
       local( 'ln -s _tools/%s %s' % (path, filename))
@@ -103,13 +101,14 @@ def init_stack(conf, root_dir):
     for filepath in conf['git_add']:
       local( 'git add %s' % (filepath) )
 
-    local( 'git commit -m "initial commit"' )
+    local( 'git commit -m "add submodules and symbolic links"' )
 
 
 def run_make_file(root_dir,make_file):
 
   with lcd(root_dir):
     local('drush make %s public' % make_file)
+    local('git add public; git commit -m "add drupal from make-file %s"' % make_file)
 
 
 
@@ -122,15 +121,21 @@ def init(root_dir = False, config_file=False, make_file=False):
 
   conf = get_configuration(config_file)
 
+  print green('initing stack... ')
+
+  local( 'mkdir -p %s' % root_dir )
+  local( 'git init %s ' % root_dir )
+
+  if make_file:
+    run_make_file(root_dir, conf['drush_makefile'])
+  elif 'drush_makefile' in conf:
+    run_make_file(root_dir, conf['drush_makefile'])
+
   init_stack(conf, root_dir)
 
   copy_fabfile(root_dir)
 
-  if make_file:
-    run_make_file(root_dir, conf['drush_makefile'])
 
-  elif 'drush_makefile' in conf:
-    run_make_file(root_dir, conf['drush_makefile'])
 
 
 
