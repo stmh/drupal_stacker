@@ -93,6 +93,7 @@ def init_stack(conf, root_dir):
         local( 'git submodule add %s _tools/%s' % (repo, name))
 
     for filename, path in conf['symbolic_links'].items():
+      local( ' rm -f %s' % filename)
       local( 'ln -s _tools/%s %s' % (path, filename))
 
     for filepath in conf['git_ignore']:
@@ -137,6 +138,12 @@ def init(root_dir = False, config_file=False, make_file=False):
 
 
 
+@task
+def upgradeSubmodules(root_dir = False, config_file=False):
+  if not root_dir:
+    help()
 
+  conf = get_configuration(config_file)
 
-
+  print green('upgrading stack... ')
+  init_stack(conf, root_dir)

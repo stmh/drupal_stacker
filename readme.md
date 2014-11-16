@@ -8,6 +8,8 @@ In its current form it will create a folder, add a _tools-folder and add the fol
 * [drupal-docker](https://github.com/stmh/drupal-docker) a Dockerfile suitable for drupal-installations and some helper-scripts.
 * [baseBox](https://github.com/MuschPusch/basebox) provides a vagrant based virtual machine running a docker-instance
 
+But this is completely configurable to your needs.
+
 
 ## Installation
 
@@ -31,7 +33,9 @@ Copy the folder to a suitable folder on your hard-drive
 
 ## Usage
 
-drupal_stacker provides currently only one task
+drupal_stacker provides currently only two tasks
+
+### init
 
     fab -f /path/to/drupal_stacker.py init:<project-path>
 
@@ -40,6 +44,16 @@ This will create the folder <project-path>, init a git-repository, add the submo
 As an alternative you can use a separate configuration-file:
 
     fab -f /path/to/drupal_stacker.py init:root_dir=<project-path>,config_file=<path-to-config-file.yaml>
+
+### upgradeSubmodules
+
+    fab -f /path/to/drupal_stacker.py upgradeSubmodules:<project-path>
+
+This will add the submodules, add some symlinks, and commit it to git
+
+As an alternative you can use a separate configuration-file:
+
+    fab -f /path/to/drupal_stacker.py upgradeSubmodules:root_dir=<project-path>,config_file=<path-to-config-file.yaml>
 
 
 
